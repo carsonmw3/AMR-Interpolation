@@ -10,21 +10,17 @@
 using namespace std;
 using namespace amrex;
 
-/* Exctract a data from a plotfile for a given parameter at a given level.
- *
- * Run in terminal by navigating to ~/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/
- * and using ./loadData ../../../plt07400/
- */
-
 int main(int argc, char* argv[]) {
 
     Initialize(argc, argv);
 
     // read in parameters from inputs file
+    string iFile;
     ParmParse pp;
 
-    // specify infile
-    string iFile = argv[1];
+    pp.query("infile", iFile);
+    if (iFile.empty())
+        Abort("You must specify 'infile'");
 
     int comp_in_line = 0;
     pp.query("comp_in_line", comp_in_line);
@@ -62,8 +58,8 @@ int main(int argc, char* argv[]) {
         Abort();
     }
 
-    // choose the level to extract data from
-    int lev = 1;
+    // level to extract the data from
+    int lev = 0;
 
     // storage for the Multifab
     MultiFab mf;
@@ -71,15 +67,12 @@ int main(int argc, char* argv[]) {
     string iFile_lev = iFile;
 
     string levX = "/Level_"+to_string(lev)+"/Cell";
-    string levXX = "/Level_0"+to_string(lev)+"/Cell";
 
     // now read in plotfile data
     // check to see whether the user pointed to the plotfile base directory
     // or the data itself
     if (FileExists(iFile+levX+"_H")) {
         iFile_lev += levX;
-    } else if (FileExists(iFile+levXX+"_H")) {
-        iFile_lev += levXX;
     } else {
         Abort("No data for the specified level.");
     }
@@ -96,39 +89,39 @@ int main(int argc, char* argv[]) {
     Print() << "Number of grid points at level " << lev << " = " << ba.numPts() << endl;
     Print() << "Number of boxes at level " << lev << " = " << ba.size() << endl;
 
-    // desired component index
-    int component = 6;
+    // // desired component index
+    // int component = 6;
 
-    // given box, access data
-    int boxNum = 1;
-    Box mfdata = ba[boxNum];
-    Print() << mfdata.size() << endl;
+    // // given box, access data
+    // int boxNum = 1;
+    // Box mfdata = ba[boxNum];
+    // Print() << mfdata.size() << endl;
 
-    Array4<Real> mfdata1 = mf.array(boxNum);
-    Print() << mfdata1(505,0,48,component);
+    // Array4<Real> mfdata1 = mf.array(boxNum);
+    // Print() << mfdata1(505,0,48,component);
 
-    // given location, access data
-    int xloc = 505;
-    int yloc = 0;
-    int zloc = 48;
+    // // given location, access data
+    // int xloc = 505;
+    // int yloc = 0;
+    // int zloc = 48;
 
-    for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
+    // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
 
-        const Box& box = mfi.validbox();
-        const Array4<Real>& mfdata = mf.array(mfi);
+    //     const Box& box = mfi.validbox();
+    //     const Array4<Real>& mfdata = mf.array(mfi);
 
-        bool found = false;
+    //     bool found = false;
 
-        while(found == false) {
-            try {
-                Print() << mfdata(xloc, yloc, zloc, component) << endl;
-                found = true;
-            } catch(...) {
+    //     while(found == false) {
+    //         try {
+    //             Print() << mfdata(xloc, yloc, zloc, component) << endl;
+    //             found = true;
+    //         } catch(...) {
 
-            }
-        }
+    //         }
+    //     }
 
-    }
+    // }
 
     // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
 
