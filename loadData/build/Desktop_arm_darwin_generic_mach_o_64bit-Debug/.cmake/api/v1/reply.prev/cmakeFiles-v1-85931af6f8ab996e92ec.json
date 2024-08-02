@@ -1,0 +1,337 @@
+{
+	"inputs" : 
+	[
+		{
+			"path" : "CMakeLists.txt"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/.qtc/package-manager/auto-setup.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/CMakeFiles/3.29.3/CMakeSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeSystemSpecificInitialize.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Darwin-Initialize.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/CMakeFiles/3.29.3/CMakeCXXCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeSystemSpecificInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeGenericSystem.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeInitializeConfigs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Darwin.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/UnixPaths.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeCXXInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/GNU.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-AppleClang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-Clang-CXX.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/GNUInstallDirs.cmake"
+		},
+		{
+			"path" : "amrex/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXUtils.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindGit.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/.qtc/package-manager/auto-setup.cmake"
+		},
+		{
+			"isGenerated" : true,
+			"path" : "build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/CMakeFiles/3.29.3/CMakeCCompiler.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeCInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeLanguageInformation.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Compiler/Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-AppleClang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-Clang-C.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Platform/Apple-Clang.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeCommonLanguageInclude.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXOptions.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakeDependentOption.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXInstallHelpers.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CMakePackageConfigHelpers.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/WriteBasicConfigVersionFile.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXConfig.cmake.in"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/BasicConfigVersion-AnyNewerVersion.cmake.in"
+		},
+		{
+			"path" : "amrex/Src/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXParallelBackends.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindThreads.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CheckLibraryExists.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CheckIncludeFile.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/CheckCSourceCompiles.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/Internal/CheckSourceCompiles.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindPackageHandleStandardArgs.cmake"
+		},
+		{
+			"isCMake" : true,
+			"isExternal" : true,
+			"path" : "/Users/cwillia2/Qt/Tools/CMake/CMake.app/Contents/share/cmake-3.29/Modules/FindPackageMessage.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXSetDefines.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenerateConfigHeader.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXThirdPartyLibraries.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXFlagsTargets.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReX_Config.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReX_ThirdPartyProfilers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXTargetHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenexHelpers.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXGenerateConfigHeader.cmake"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReX_Config_ND.H.in"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReX_Version.H.in"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReX_Config.H.in"
+		},
+		{
+			"path" : "amrex/Tools/CMake/AMReXClangTidy.cmake"
+		},
+		{
+			"path" : "amrex/Src/Base/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Src/Boundary/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Src/AmrCore/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Src/Amr/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Src/LinearSolvers/CMakeLists.txt"
+		},
+		{
+			"path" : "amrex/Src/Particle/CMakeLists.txt"
+		}
+	],
+	"kind" : "cmakeFiles",
+	"paths" : 
+	{
+		"build" : "/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug",
+		"source" : "/Users/cwillia2/combustiondata/loadData"
+	},
+	"version" : 
+	{
+		"major" : 1,
+		"minor" : 0
+	}
+}

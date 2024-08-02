@@ -1,0 +1,18 @@
+ 0: amrex::BLBackTrace::print_backtrace_info(__sFILE*) (in loadData) (AMReX_BLBackTrace.cpp:190)
+
+ 1: amrex::BLBackTrace::handler(int) (in loadData) (AMReX_BLBackTrace.cpp:98)
+
+ 2: _sigtramp (in libsystem_platform.dylib) + 56
+
+ 3: std::__1::__constexpr_strlen[abi:ue170006](char const*) (in loadData) (constexpr_c_functions.h:49)
+
+ 4: std::__1::char_traits<char>::length[abi:ue170006](char const*) (in loadData) (char_traits.h:222)
+
+ 5: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*) (in loadData) (string:940)
+
+ 6: std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>::basic_string[abi:ue170006]<0>(char const*) (in loadData) (string:938)
+
+ 7: main (in loadData) (main.cpp:27)
+
+ 8: start (in dyld) + 2360
+
