@@ -20,11 +20,16 @@ int main(int argc, char* argv[]) {
 
     Initialize(argc, argv);
 
+    // plotfile name
+    string iFile;
+
     // read in parameters from inputs file
     ParmParse pp;
 
-    // specify infile
-    string iFile = argv[1];
+    // read in plotfile name
+    pp.query("infile", iFile);
+    if (iFile.empty())
+        Abort("You must specify 'infile'");
 
     int comp_in_line = 0;
     pp.query("comp_in_line", comp_in_line);
@@ -130,40 +135,40 @@ int main(int argc, char* argv[]) {
 
     }
 
-        // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
+    // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
 
-        //     const Box& box = mfi.validbox();
-        //     const Array4<Real>& mfdata = mf.array(mfi);
+    //     const Box& box = mfi.validbox();
+    //     const Array4<Real>& mfdata = mf.array(mfi);
 
-        //     ParallelFor(box, [=] AMREX_GPU_DEVICE (int i, int j, int k){
-        //         Real temp = mfdata(i, j, k, 5);
-        //         cout << temp;
-        //     });
+    //     ParallelFor(box, [=] AMREX_GPU_DEVICE (int i, int j, int k){
+    //         Real temp = mfdata(i, j, k, 5);
+    //         cout << temp;
+    //     });
 
-        // }
+    // }
 
 
-        // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
+    // for (MFIter mfi(mf,false); mfi.isValid(); ++mfi) {
 
-        //     const Box& bx = mfi.validbox();
-        //     const auto lo = lbound(bx);
-        //     const auto hi = ubound(bx);
+    //     const Box& bx = mfi.validbox();
+    //     const auto lo = lbound(bx);
+    //     const auto hi = ubound(bx);
 
-        //     const Array4<Real>& mfdata = mf.array(mfi);
+    //     const Array4<Real>& mfdata = mf.array(mfi);
 
-        //     if (comp_in_line == 1) {
-        //         cout << mf[mfi];
-        //     } else {
-        //         for (auto n=0; n<ncomp; ++n) {
-        //             for (auto k = lo.z; k <= hi.z; ++k) {
-        //                 for (auto j = lo.y; j <= hi.y; ++j) {
-        //                     for (auto i = lo.x; i <= hi.x; ++i) {
-        //                         cout << i << " " << j << " " << k << " " << n << " " << mfdata(i,j,k,n) << '\n';
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // } // end MFIter
+    //     if (comp_in_line == 1) {
+    //         cout << mf[mfi];
+    //     } else {
+    //         for (auto n=0; n<ncomp; ++n) {
+    //             for (auto k = lo.z; k <= hi.z; ++k) {
+    //                 for (auto j = lo.y; j <= hi.y; ++j) {
+    //                     for (auto i = lo.x; i <= hi.x; ++i) {
+    //                         cout << i << " " << j << " " << k << " " << n << " " << mfdata(i,j,k,n) << '\n';
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // } // end MFIter
 
 }

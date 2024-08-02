@@ -1,4 +1,4 @@
-# Install script for directory: /Users/cwillia2/combustiondata/loadData
+# Install script for directory: /Users/cwillia2/AMR-Interpolation/loadData
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,7 +38,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/loadData")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/bin" TYPE EXECUTABLE FILES "/Users/cwillia2/AMR-Interpolation/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/loadData")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/loadData" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/bin/loadData")
     if(CMAKE_INSTALL_DO_STRIP)
@@ -49,7 +49,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex/cmake_install.cmake")
+  include("/Users/cwillia2/AMR-Interpolation/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex/cmake_install.cmake")
 
 endif()
 
@@ -61,5 +61,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/cwillia2/AMR-Interpolation/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

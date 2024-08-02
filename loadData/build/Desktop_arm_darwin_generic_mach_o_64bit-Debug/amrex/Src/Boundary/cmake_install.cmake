@@ -1,4 +1,4 @@
-# Install script for directory: /Users/cwillia2/combustiondata/loadData/amrex/Src/Boundary
+# Install script for directory: /Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Boundary
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

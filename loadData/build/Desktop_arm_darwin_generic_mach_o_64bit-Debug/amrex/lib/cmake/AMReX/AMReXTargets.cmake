@@ -53,7 +53,7 @@ set_target_properties(AMReX::amrex_3d PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS "AMREX_SPACEDIM=3"
   INTERFACE_COMPILE_FEATURES "cxx_std_17"
   INTERFACE_COMPILE_OPTIONS "\$<\$<CXX_COMPILER_ID:Cray>:-h;noomp>;\$<\$<AND:\$<COMPILE_LANGUAGE:CXX>,\$<CXX_COMPILER_ID:MSVC>>:\$<IF:\$<VERSION_LESS:\$<CXX_COMPILER_VERSION>,19.26>,/experimental:preprocessor,/Zc:preprocessor>>;\$<\$<AND:\$<COMPILE_LANGUAGE:CXX>,\$<CXX_COMPILER_ID:MSVC>>:\$<\$<VERSION_GREATER_EQUAL:\$<CXX_COMPILER_VERSION>,19.14>:/Zc:__cplusplus>>;\$<\$<CXX_COMPILER_ID:Cray>:-h;noomp>"
-  INTERFACE_INCLUDE_DIRECTORIES "/Users/cwillia2/combustiondata/loadData/amrex/Src/Base;/Users/cwillia2/combustiondata/loadData/amrex/Src/Base/Parser;/Users/cwillia2/combustiondata/loadData/amrex/Src/Boundary;/Users/cwillia2/combustiondata/loadData/amrex/Src/AmrCore;/Users/cwillia2/combustiondata/loadData/amrex/Src/Amr;/Users/cwillia2/combustiondata/loadData/amrex/Src/LinearSolvers;/Users/cwillia2/combustiondata/loadData/amrex/Src/LinearSolvers/MLMG;/Users/cwillia2/combustiondata/loadData/amrex/Src/LinearSolvers/OpenBC;/Users/cwillia2/combustiondata/loadData/amrex/Src/Particle;/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex"
+  INTERFACE_INCLUDE_DIRECTORIES "/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Base;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Base/Parser;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Boundary;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/AmrCore;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Amr;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/LinearSolvers;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/LinearSolvers/MLMG;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/LinearSolvers/OpenBC;/Users/cwillia2/AMR-Interpolation/loadData/amrex/Src/Particle;/Users/cwillia2/AMR-Interpolation/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex"
   INTERFACE_LINK_LIBRARIES "Threads::Threads;AMReX::Flags_CXX;AMReX::Flags_INLINE"
 )
 
@@ -85,7 +85,7 @@ set_target_properties(AMReX::Flags_FPE PROPERTIES
 set_property(TARGET AMReX::amrex_3d APPEND PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
 set_target_properties(AMReX::amrex_3d PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-  IMPORTED_LOCATION_DEBUG "/Users/cwillia2/combustiondata/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex/Src/libamrex_3d.a"
+  IMPORTED_LOCATION_DEBUG "/Users/cwillia2/AMR-Interpolation/loadData/build/Desktop_arm_darwin_generic_mach_o_64bit-Debug/amrex/Src/libamrex_3d.a"
   )
 
 # This file does not depend on other imported targets which have
