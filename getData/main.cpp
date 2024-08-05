@@ -89,8 +89,8 @@ int main(int argc, char* argv[]) {
     Print() << "Number of grid points at level " << lev << " = " << ba.numPts() << endl;
     Print() << "Number of boxes at level " << lev << " = " << ba.size() << endl;
 
-    // // desired component index
-    // int component = 6;
+    // desired component index
+    int component = 6;
 
     // // given box, access data
     // int boxNum = 1;
