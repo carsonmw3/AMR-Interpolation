@@ -2,6 +2,7 @@
 #include "AMReX_Print.H"
 #include <fstream>
 #include <iostream>
+#include <list>
 
 #include <AMReX.H>
 #include <AMReX_ParmParse.H>
@@ -14,88 +15,144 @@ int main(int argc, char* argv[]) {
 
     Initialize(argc, argv);
 
-    // read in parameters from inputs file
-    string iFile;
+    Array<string, 3> labels = {"A", "C", "B"};
+
+    // read in input files
+    string aFile;
+    string cFile;
+    string bFile;
     ParmParse pp;
 
-    pp.query("infile", iFile);
-    if (iFile.empty())
-        Abort("You must specify 'infile'");
+    pp.query("a", aFile);
+    pp.query("c", cFile);
+    pp.query("b", bFile);
 
     int comp_in_line = 0;
     pp.query("comp_in_line", comp_in_line);
 
-    // for the Header
-    string Header = iFile;
-    Header += "/Header";
+    Array<string,3> files = {aFile, cFile, bFile};
 
-    // open header
-    ifstream x;
-    x.open(Header.c_str(), ios::in);
-    if (!x.is_open()) {
-        Abort("Failed to open header file: " + Header);
-    }
+    // set up storage variables/tools for info from input files
+    string aHeader = aFile;
+    string cHeader = cFile;
+    string bHeader = bFile;
+    Array<string, 3> headers = {aHeader, cHeader, bHeader};
 
-    // read in the first line of the header
-    string str;
-    x >> str;
+    Array<ifstream, 3> streams;
 
-    // read in number of components from header
-    int ncomp;
-    x >> ncomp;
+    string aStr;
+    string cStr;
+    string bStr;
+    Array<string, 3> strings = {aStr, cStr, bStr};
 
-    // read in variable names from header
-    for (int n=0; n<ncomp; n++) {
-        x >> str;
-    }
+    int aNComp = 0;
+    int cNComp = 0;
+    int bNComp = 0;
+    Array<int, 3> nComps = {aNComp, cNComp, bNComp};
 
-    // read in dimensionality from header
-    int dim;
-    x >> dim;
-
-    if (dim != AMREX_SPACEDIM) {
-        Print() << "\nError: you are using a " << AMREX_SPACEDIM << "D build to open a " << dim << "D plotfile\n\n";
-        Abort();
-    }
+    int aDim = 0;
+    int cDim = 0;
+    int bDim = 0;
+    Array<int, 3> dims = {aDim, cDim, bDim};
 
     // level to extract the data from
     int lev = 0;
-
-    // storage for the Multifab
-    MultiFab mf;
-
-    string iFile_lev = iFile;
-
     string levX = "/Level_"+to_string(lev)+"/Cell";
 
-    // now read in plotfile data
-    // check to see whether the user pointed to the plotfile base directory
-    // or the data itself
-    if (FileExists(iFile+levX+"_H")) {
-        iFile_lev += levX;
-    } else {
-        Abort("No data for the specified level.");
-    }
-
-    // read in plotfile to MultiFab
-    VisMF::Read(mf, iFile_lev);
-
-    ncomp = mf.nComp();
-    Print() << "Number of components in the plotfile = " << ncomp << endl;
-    Print() << "Nodality of plotfile = " << mf.ixType().toIntVect() << endl;
-
-    // get boxArray to compute number of grid points at that level
-    BoxArray ba = mf.boxArray();
-    Print() << "Number of grid points at level " << lev << " = " << ba.numPts() << endl;
-    Print() << "Number of boxes at level " << lev << " = " << ba.size() << endl;
+    string aFile_lev;
+    string cFile_lev;
+    string bFile_lev;
+    Array<string, 3> lev_files = {aFile_lev, cFile_lev, bFile_lev};
 
     // desired component index
     int component = 6;
 
-    // // given box, access data
-    // int boxNum = 1;
-    // Box mfdata = ba[boxNum];
-    // Print() << mfdata.size() << endl;
+
+    // Process input files
+    for (int i=0; i < files.size(); i++) {
+
+        headers[i] += "/Header";
+
+        // open header
+        streams[i].open(headers[i].c_str(), ios::in);
+        if (!streams[i].is_open()) {
+            Abort("Failed to open header file: " + headers[i]);
+        }
+
+        // read in the first line of the header
+        streams[i] >> strings[i];
+
+        // read in the number of components from the header
+        streams[i] >> nComps[i];
+
+        // read in variable names from header
+        for (int n=0; n<nComps[i]; n++) {
+            streams[i] >> strings[i];
+        }
+
+        // read in dimensionality from header
+        streams[i] >> dims[i];
+
+        if (dims[i] != AMREX_SPACEDIM) {
+            Print() << "\nError: you are using a " << AMREX_SPACEDIM << "D build to open a " << dims[i] << "D plotfile\n\n";
+            Abort();
+        }
+
+        lev_files[i] = files[i];
+
+        // check to see whether user pointed to plotfile base directory
+        if (FileExists(files[i]+levX+"_H")) {
+            lev_files[i] += levX;
+        } else {
+            Abort("No data for the specified level.");
+        }
+
+
+    }
+
+
+    // create multifabs
+    MultiFab aMF;
+    MultiFab cMF;
+    MultiFab bMF;
+    Array<MultiFab, 3> mfs;
+
+    // read data into multifabs
+    for (int i = 0; i < mfs.size(); i++) {
+        VisMF::Read(mfs[i], lev_files[i]);
+
+        nComps[i] = mfs[i].nComp();
+        Print() << "Number of components in file " << labels[i] << " = " << nComps[i] << endl;
+        Print() << "Nodality of file " << labels[i] << " = " << mfs[i].ixType().toIntVect() << endl;
+
+        // get boxArray to compute number of grid points at that level
+        BoxArray ba = mfs[i].boxArray();
+        Print() << "Number of grid points at level " << lev << " in file " << labels[i] << " = " << ba.numPts() << endl;
+        Print() << "Number of boxes at level " << lev << " in file " << labels[i] << " = " << ba.size() << endl;
+        Print() << endl;
+    }
+
+
+    // Extract data from the files
+    for (int i=0; i < mfs.size(); i++) {
+
+        for (MFIter mfi(mfs[i], false); mfi.isValid(); ++mfi) {
+
+
+
+        }
+
+    }
+
+
+    // // size  and location of boxes
+    // for (int boxNum = 0; boxNum < ba.size(); boxNum++) {
+    //     Box mfdata = ba[boxNum];
+    //     Print() << "Box " << boxNum << " size: " << mfdata.size() << endl;
+    //     Print() << "Box " << boxNum << " lower corner: " << mfdata.smallEnd() << endl;
+    //     Print() << "Box " << boxNum << " upper corner: " << mfdata.bigEnd() << endl;
+    // }
+
 
     // Array4<Real> mfdata1 = mf.array(boxNum);
     // Print() << mfdata1(505,0,48,component);
