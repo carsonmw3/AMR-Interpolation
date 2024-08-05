@@ -53,5 +53,5 @@ compile_commands.json
 
 *_qmlcache.qrc
 .DS_Store
-loadData/amrex/
-getData/amrex/
+/loadData/amrex/
+/getData/amrex/
