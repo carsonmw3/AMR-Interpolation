@@ -2,7 +2,7 @@
 #include "AMReX_Print.H"
 #include <fstream>
 #include <iostream>
-#include <list>
+#include <vector>
 
 #include <AMReX.H>
 #include <AMReX_ParmParse.H>
@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
 
     Initialize(argc, argv);
 
-    Array<string, 3> labels = {"A", "C", "B"};
+    vector<string> labels = {"A", "C", "B"};
 
     // read in input files
     string aFile;
@@ -30,30 +30,28 @@ int main(int argc, char* argv[]) {
     int comp_in_line = 0;
     pp.query("comp_in_line", comp_in_line);
 
-    Array<string,3> files = {aFile, cFile, bFile};
+    vector<string> files = {aFile, cFile, bFile};
 
     // set up storage variables/tools for info from input files
     string aHeader = aFile;
     string cHeader = cFile;
     string bHeader = bFile;
-    Array<string, 3> headers = {aHeader, cHeader, bHeader};
-
-    Array<ifstream, 3> streams;
+    vector<string> headers = {aHeader, cHeader, bHeader};
 
     string aStr;
     string cStr;
     string bStr;
-    Array<string, 3> strings = {aStr, cStr, bStr};
+    vector<string> strings = {aStr, cStr, bStr};
 
     int aNComp = 0;
     int cNComp = 0;
     int bNComp = 0;
-    Array<int, 3> nComps = {aNComp, cNComp, bNComp};
+    vector<int> nComps = {aNComp, cNComp, bNComp};
 
     int aDim = 0;
     int cDim = 0;
     int bDim = 0;
-    Array<int, 3> dims = {aDim, cDim, bDim};
+    vector<int> dims = {aDim, cDim, bDim};
 
     // level to extract the data from
     int lev = 0;
@@ -62,7 +60,7 @@ int main(int argc, char* argv[]) {
     string aFile_lev;
     string cFile_lev;
     string bFile_lev;
-    Array<string, 3> lev_files = {aFile_lev, cFile_lev, bFile_lev};
+    vector<string> lev_files = {aFile_lev, cFile_lev, bFile_lev};
 
     // desired component index
     int component = 6;
@@ -71,27 +69,29 @@ int main(int argc, char* argv[]) {
     // Process input files
     for (int i=0; i < files.size(); i++) {
 
+        ifstream x;
+
         headers[i] += "/Header";
 
         // open header
-        streams[i].open(headers[i].c_str(), ios::in);
-        if (!streams[i].is_open()) {
+        x.open(headers[i].c_str(), ios::in);
+        if (!x.is_open()) {
             Abort("Failed to open header file: " + headers[i]);
         }
 
         // read in the first line of the header
-        streams[i] >> strings[i];
+        x >> strings[i];
 
         // read in the number of components from the header
-        streams[i] >> nComps[i];
+        x >> nComps[i];
 
         // read in variable names from header
         for (int n=0; n<nComps[i]; n++) {
-            streams[i] >> strings[i];
+            x >> strings[i];
         }
 
         // read in dimensionality from header
-        streams[i] >> dims[i];
+        x >> dims[i];
 
         if (dims[i] != AMREX_SPACEDIM) {
             Print() << "\nError: you are using a " << AMREX_SPACEDIM << "D build to open a " << dims[i] << "D plotfile\n\n";
@@ -112,10 +112,11 @@ int main(int argc, char* argv[]) {
 
 
     // create multifabs
+    // figure out how to use pointers to make this vector!
     MultiFab aMF;
     MultiFab cMF;
     MultiFab bMF;
-    Array<MultiFab, 3> mfs;
+    vector<MultiFab> mfs;
 
     // read data into multifabs
     for (int i = 0; i < mfs.size(); i++) {
@@ -130,19 +131,153 @@ int main(int argc, char* argv[]) {
         Print() << "Number of grid points at level " << lev << " in file " << labels[i] << " = " << ba.numPts() << endl;
         Print() << "Number of boxes at level " << lev << " in file " << labels[i] << " = " << ba.size() << endl;
         Print() << endl;
+
     }
 
 
-    // Extract data from the files
-    for (int i=0; i < mfs.size(); i++) {
+    // Storage structure for the extracted data
+    vector<vector<vector<vector<vector<Real>>>>> extractedData(3, vector<vector<vector<vector<Real>>>>
+                                                              (4608, vector<vector<vector<Real>>>
+                                                              (8, vector<vector<Real>>
+                                                              (8, vector<Real>(8)))));
 
-        for (MFIter mfi(mfs[i], false); mfi.isValid(); ++mfi) {
+    // Refine 16x16x16 boxes to 8x8x8 boxes
+    int boxNum = 0;
 
+    for (int n = 0; n < mfs.size(); n++) {
 
+        for (MFIter mfi(mfs[n], false); mfi.isValid(); ++mfi) {
+
+            const Box& box = mfi.validbox();
+            const Array4<Real>& mfdata = mfs[n].array(mfi);
+            const auto lo = lbound(box);
+            const auto hi = ubound(box);
+
+            // Octant 1: xyz
+            for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
+
+                for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
+
+                    for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
+
+                        extractedData[n][boxNum * 8][i-lo.x][j-lo.y][k-lo.z] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 2: Xyz
+            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+
+                for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
+
+                    for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 1][i-(lo.x + box.size()[0]/2)][j-lo.y][k-lo.z] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 3: XYz
+            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+
+                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+
+                    for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 2][i-(lo.x + box.size()[0]/2)][j-(lo.y + box.size()[1]/2)][k-lo.z] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 4: xYz
+            for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
+
+                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+
+                    for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 3][i-lo.x][j-(lo.y + box.size()[1]/2)][k-lo.z] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 5: xyZ
+            for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
+
+                for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
+
+                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 4][i-lo.x][j-lo.y][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 6: XyZ
+            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+
+                for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
+
+                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 5][i-(lo.x + box.size()[0]/2)][j-lo.y][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 7: XYZ
+            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+
+                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+
+                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 6][i-(lo.x + box.size()[0]/2)][j-(lo.y + box.size()[1]/2)][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
+
+            // Octant 8: xYZ
+            for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
+
+                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+
+                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+
+                        extractedData[n][(boxNum * 8) + 7][i-lo.x][j-(lo.y + box.size()[1]/2)][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
+
+                    }
+
+                }
+
+            }
 
         }
 
     }
+
+
 
 
     // // size  and location of boxes
