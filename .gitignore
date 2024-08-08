@@ -56,3 +56,4 @@ compile_commands.json
 /loadData/amrex/
 /getData/amrex/
 /getData/hdf5/
+.brew
