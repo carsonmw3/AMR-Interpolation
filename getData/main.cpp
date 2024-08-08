@@ -3,10 +3,13 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include <AMReX.H>
 #include <AMReX_ParmParse.H>
 #include <AMReX_VisMF.H>
+
+// #include <H5Cpp.h>
 
 using namespace std;
 using namespace amrex;
@@ -18,9 +21,7 @@ int main(int argc, char* argv[]) {
     vector<string> labels = {"A", "C", "B"};
 
     // read in input files
-    string aFile;
-    string cFile;
-    string bFile;
+    string aFile, cFile, bFile;
     ParmParse pp;
 
     pp.query("a", aFile);
@@ -33,37 +34,27 @@ int main(int argc, char* argv[]) {
     vector<string> files = {aFile, cFile, bFile};
 
     // set up storage variables/tools for info from input files
-    string aHeader = aFile;
-    string cHeader = cFile;
-    string bHeader = bFile;
+    string aHeader = aFile, cHeader = cFile, bHeader = bFile;
     vector<string> headers = {aHeader, cHeader, bHeader};
 
-    string aStr;
-    string cStr;
-    string bStr;
+    string aStr, cStr, bStr;
     vector<string> strings = {aStr, cStr, bStr};
 
-    int aNComp = 0;
-    int cNComp = 0;
-    int bNComp = 0;
+    int aNComp = 0, cNComp = 0, bNComp = 0;
     vector<int> nComps = {aNComp, cNComp, bNComp};
 
-    int aDim = 0;
-    int cDim = 0;
-    int bDim = 0;
+    int aDim = 0, cDim = 0, bDim = 0;
     vector<int> dims = {aDim, cDim, bDim};
 
     // level to extract the data from
     int lev = 0;
     string levX = "/Level_"+to_string(lev)+"/Cell";
 
-    string aFile_lev;
-    string cFile_lev;
-    string bFile_lev;
+    string aFile_lev, cFile_lev, bFile_lev;
     vector<string> lev_files = {aFile_lev, cFile_lev, bFile_lev};
 
     // desired component index
-    int component = 6;
+    int component = 2;
 
 
     // Process input files
@@ -111,40 +102,36 @@ int main(int argc, char* argv[]) {
     }
 
 
-    // create multifabs
-    // figure out how to use pointers to make this vector!
-    MultiFab aMF;
-    MultiFab cMF;
-    MultiFab bMF;
-    vector<MultiFab> mfs;
+    // create array of multifabs
+    Array<MultiFab, 3> mfs;
+
 
     // read data into multifabs
     for (int i = 0; i < mfs.size(); i++) {
         VisMF::Read(mfs[i], lev_files[i]);
 
-        nComps[i] = mfs[i].nComp();
-        Print() << "Number of components in file " << labels[i] << " = " << nComps[i] << endl;
-        Print() << "Nodality of file " << labels[i] << " = " << mfs[i].ixType().toIntVect() << endl;
+        // nComps[i] = mfs[i].nComp();
+        // Print() << "Number of components in file " << labels[i] << " = " << nComps[i] << endl;
+        // Print() << "Nodality of file " << labels[i] << " = " << mfs[i].ixType().toIntVect() << endl;
 
-        // get boxArray to compute number of grid points at that level
-        BoxArray ba = mfs[i].boxArray();
-        Print() << "Number of grid points at level " << lev << " in file " << labels[i] << " = " << ba.numPts() << endl;
-        Print() << "Number of boxes at level " << lev << " in file " << labels[i] << " = " << ba.size() << endl;
-        Print() << endl;
+        // // get boxArray to compute number of grid points at that level
+        // BoxArray ba = mfs[i].boxArray();
+        // Print() << "Number of grid points at level " << lev << " in file " << labels[i] << " = " << ba.numPts() << endl;
+        // Print() << "Number of boxes at level " << lev << " in file " << labels[i] << " = " << ba.size() << endl;
+        // Print() << endl;
 
     }
 
 
     // Storage structure for the extracted data
     vector<vector<vector<vector<vector<Real>>>>> extractedData(3, vector<vector<vector<vector<Real>>>>
-                                                              (4608, vector<vector<vector<Real>>>
-                                                              (8, vector<vector<Real>>
-                                                              (8, vector<Real>(8)))));
+        (4608, vector<vector<vector<Real>>>(8, vector<vector<Real>>(8, vector<Real>(8)))));
 
     // Refine 16x16x16 boxes to 8x8x8 boxes
-    int boxNum = 0;
 
     for (int n = 0; n < mfs.size(); n++) {
+
+        int boxNum = 0;
 
         for (MFIter mfi(mfs[n], false); mfi.isValid(); ++mfi) {
 
@@ -169,7 +156,7 @@ int main(int argc, char* argv[]) {
             }
 
             // Octant 2: Xyz
-            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+            for (int i = lo.x + box.size()[0]/2; i <= hi.x; ++i) {
 
                 for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
 
@@ -184,9 +171,9 @@ int main(int argc, char* argv[]) {
             }
 
             // Octant 3: XYz
-            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+            for (int i = lo.x + box.size()[0]/2; i <= hi.x; ++i) {
 
-                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+                for (int j = lo.y + box.size()[1]/2; j <= hi.y; ++j) {
 
                     for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
 
@@ -201,7 +188,7 @@ int main(int argc, char* argv[]) {
             // Octant 4: xYz
             for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
 
-                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+                for (int j = lo.y + box.size()[1]/2; j <= hi.y; ++j) {
 
                     for (int k = lo.z; k < lo.z + box.size()[2]/2; ++k) {
 
@@ -218,7 +205,7 @@ int main(int argc, char* argv[]) {
 
                 for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
 
-                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+                    for (int k = lo.z + box.size()[2]/2; k <= hi.z; ++k) {
 
                         extractedData[n][(boxNum * 8) + 4][i-lo.x][j-lo.y][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
 
@@ -229,11 +216,11 @@ int main(int argc, char* argv[]) {
             }
 
             // Octant 6: XyZ
-            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+            for (int i = lo.x + box.size()[0]/2; i <= hi.x; ++i) {
 
                 for (int j = lo.y; j < lo.y + box.size()[1]/2; ++j) {
 
-                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+                    for (int k = lo.z + box.size()[2]/2; k <= hi.z; ++k) {
 
                         extractedData[n][(boxNum * 8) + 5][i-(lo.x + box.size()[0]/2)][j-lo.y][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
 
@@ -244,11 +231,11 @@ int main(int argc, char* argv[]) {
             }
 
             // Octant 7: XYZ
-            for (int i = lo.x + box.size()[0]/2; i < hi.x; ++i) {
+            for (int i = lo.x + box.size()[0]/2; i <= hi.x; ++i) {
 
-                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+                for (int j = lo.y + box.size()[1]/2; j <= hi.y; ++j) {
 
-                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+                    for (int k = lo.z + box.size()[2]/2; k <= hi.z; ++k) {
 
                         extractedData[n][(boxNum * 8) + 6][i-(lo.x + box.size()[0]/2)][j-(lo.y + box.size()[1]/2)][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
 
@@ -261,9 +248,9 @@ int main(int argc, char* argv[]) {
             // Octant 8: xYZ
             for (int i = lo.x; i < lo.x + box.size()[0]/2; ++i) {
 
-                for (int j = lo.y + box.size()[1]/2; j < hi.y; ++j) {
+                for (int j = lo.y + box.size()[1]/2; j <= hi.y; ++j) {
 
-                    for (int k = lo.z + box.size()[2]/2; k < lo.z; ++k) {
+                    for (int k = lo.z + box.size()[2]/2; k <= hi.z; ++k) {
 
                         extractedData[n][(boxNum * 8) + 7][i-lo.x][j-(lo.y + box.size()[1]/2)][k-(lo.z + box.size()[2]/2)] = mfdata(i,j,k,component);
 
@@ -272,21 +259,34 @@ int main(int argc, char* argv[]) {
                 }
 
             }
-
+            boxNum++;
         }
 
     }
 
 
+    for (int i=0; i < 8; i++) {
+        Print() << mfs[0].array(0)(i,i,i,component) << " | " << extractedData[0][0][i][i][i] << endl;
+    }
 
+    // // Testing
+    // for (int i = 1000; i < 1010; i++) {
+    //     for (int x = 0; x < 8; x++) {
+    //         for (int y = 0; y < 8; y++) {
+    //             for (int z = 0; z < 8; z++) {
 
-    // // size  and location of boxes
-    // for (int boxNum = 0; boxNum < ba.size(); boxNum++) {
-    //     Box mfdata = ba[boxNum];
-    //     Print() << "Box " << boxNum << " size: " << mfdata.size() << endl;
-    //     Print() << "Box " << boxNum << " lower corner: " << mfdata.smallEnd() << endl;
-    //     Print() << "Box " << boxNum << " upper corner: " << mfdata.bigEnd() << endl;
+    //                 Print() << "Box " << i << ": " << extractedData[0][i][x][y][z] << ", " << extractedData[1][i][x][y][z] << ", " << extractedData[2][i][x][y][z] << endl;
+
+    //             }
+    //         }
+    //     }
     // }
+
+
+    // size  and location of boxes
+    // Print() << "Box " << boxNum << " size: " << mfdata.size() << endl;
+    // Print() << "Box " << boxNum << " lower corner: " << mfdata.smallEnd() << endl;
+    // Print() << "Box " << boxNum << " upper corner: " << mfdata.bigEnd() << endl;
 
 
     // Array4<Real> mfdata1 = mf.array(boxNum);
