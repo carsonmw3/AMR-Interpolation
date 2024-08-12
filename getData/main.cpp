@@ -92,8 +92,96 @@ void writeBin (vector<vector<vector<float>>> data, string outFilename) {
 // Refine the volume to NxNxN blocks
 vector<vector<vector<vector<float>>>> toBlocks (vector<vector<vector<float>>> data, int dimension) {
 
-    // First iterate x, then y, then z, i.e. z is outermost loop
-    // outer loops that move between 8x8x8 blocks, and inner loops that grab and assign the individual elements
+    data.shrink_to_fit();
+    int xDim = data.size();
+    int yDim = data[0].size();
+    int zDim = data[0][0].size();
+
+    // check if valid block size
+    if (xDim % dimension != 0 || yDim % dimension != 0 || zDim % dimension != 0) {
+        Print() << "Not a valid block size!" << endl;
+        Abort();
+    }
+
+    // compute number of steps for each dimension
+    int xSteps = xDim / dimension;
+    int ySteps = yDim / dimension;
+    int zSteps = zDim / dimension;
+
+    // create output storage
+    vector<vector<vector<vector<float>>>> refined;
+
+    for (int k = 0; k < zSteps; k++) {
+
+        for (int j = 0; j < ySteps; j++) {
+
+            for (int i = 0; i < xSteps; i++) {
+
+                int xLo = i * dimension;
+                int yLo = j * dimension;
+                int zLo = k * dimension;
+
+                vector<vector<vector<float>>> block(dimension, vector<vector<float>>(dimension, vector<float>(dimension)));
+
+                for (int z = 0; z < dimension; z++) {
+
+                    for (int y = 0; y < dimension; y++) {
+
+                        for (int x = 0; x < dimension; x++) {
+
+                            block[x][y][z] = data[xLo + x][yLo + y][zLo + z];
+
+                        }
+
+                    }
+
+                }
+
+                refined.push_back(block);
+
+            }
+
+        }
+
+    }
+
+    refined.shrink_to_fit();
+    return refined;
+
+}
+
+
+
+
+// given the index of a block, determines its coordinates in the greater volume
+IntVect location (int index, vector<vector<vector<float>>> volume, vector<vector<vector<vector<float>>>> blocks, int blockDim) {
+
+    // get dimensions of greater volume
+    volume.shrink_to_fit();
+    int xDim = volume.size();
+    int yDim = volume[0].size();
+    int zDim = volume[0][0].size();
+
+    // compute number of blocks for each dimension, and total number of blocks
+    int xBlocks = xDim / blockDim;
+    int yBlocks = yDim / blockDim;
+    int zBlocks = zDim / blockDim;
+    int numBlocks = xBlocks * yBlocks * zBlocks;
+
+    // calculate the lo coordinate for each dimension for the given block
+    int yPer = numBlocks / zBlocks / yBlocks;
+    int zPer = numBlocks / zBlocks;
+
+    int xLo = ((index % zPer) % yPer) * blockDim;
+    int yLo = ((index % zPer) / yPer) * blockDim;
+    int zLo = (index / zPer) * blockDim;
+
+    IntVect location;
+    location[0] = xLo;
+    location[1] = yLo;
+    location[2] = zLo;
+
+    return location;
 
 }
 
@@ -140,7 +228,7 @@ int main (int argc, char* argv[]) {
     vector<string> lev_files = {aFile_lev, cFile_lev, bFile_lev};
 
     // desired component index
-    int component = 1;
+    int component = 5;
 
     // Process input files
     for (int i=0; i < files.size(); i++) {
@@ -185,12 +273,21 @@ int main (int argc, char* argv[]) {
     }
 
 
-    vector<vector<vector<float>>> aData = collectData(lev_files[0], labels[0], lev, component);
-    vector<vector<vector<float>>> cData = collectData(lev_files[1], labels[1], lev, component);
-    vector<vector<vector<float>>> bData = collectData(lev_files[2], labels[2], lev, component);
+    vector<vector<vector<float>>> aVolume = collectData(lev_files[0], labels[0], lev, component);
+    vector<vector<vector<float>>> cVolume = collectData(lev_files[1], labels[1], lev, component);
+    vector<vector<vector<float>>> bVolume = collectData(lev_files[2], labels[2], lev, component);
 
-    writeBin(aData, "toVisualize.raw");
+    writeBin(aVolume, "toVisualize.raw");
 
+    vector<vector<vector<vector<float>>>> aBlocks = toBlocks(aVolume, 8);
+    vector<vector<vector<vector<float>>>> cBlocks = toBlocks(cVolume, 8);
+    vector<vector<vector<vector<float>>>> bBlocks = toBlocks(bVolume, 8);
+
+    IntVect loc = location(2464, aVolume, aBlocks, 8);
+    Print() << loc << endl;
+
+
+    writeBin(aBlocks[2464], "Block.raw");
 
 }
 
@@ -212,6 +309,7 @@ int main (int argc, char* argv[]) {
 //     ParmParse pp;
 
 //     pp.query("a", aFile);
+
 //     pp.query("c", cFile);
 //     pp.query("b", bFile);
 
