@@ -58,3 +58,5 @@ compile_commands.json
 /getData/hdf5/
 .brew
 /getData/.brew/
+.ipynb_checkpoints
+*.raw

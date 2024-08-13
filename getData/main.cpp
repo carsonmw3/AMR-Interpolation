@@ -65,25 +65,58 @@ vector<vector<vector<float>>> collectData (string lev_file, string filename, int
 }
 
 
-// write a 3x3x3 grid of data to a binary file
-void writeBin (vector<vector<vector<float>>> data, string outFilename) {
+// write a data to a .raw format for use in training model
+void writeBin (vector<vector<vector<vector<float>>>> aData,
+              vector<vector<vector<vector<float>>>> cData,
+              vector<vector<vector<vector<float>>>> bData,
+              string outFilename) {
 
-    data.shrink_to_fit();
-    int xDim = data.size();
-    int yDim = data[0].size();
-    int zDim = data[0][0].size();
 
     fstream fout;
-
     fout.open(outFilename, ios::out | ios::binary);
 
-    for (int k=0; k < zDim; k++) {
-        for (int j=0; j < yDim; j++) {
-            for (int i=0; i < xDim; i++) {
-                fout.write(reinterpret_cast<char*>(&data[i][j][k]), sizeof(float));
+    aData.shrink_to_fit();
+    cData.shrink_to_fit();
+    bData.shrink_to_fit();
+
+    if (aData.size() != cData.size() || aData.size() != bData.size() || cData.size() != bData.size()) {
+        Print() << "Datasets are not the same size!";
+        Abort();
+    }
+
+    int numBlocks = aData.size();
+    int xDim = aData[0].size();
+    int yDim = aData[0][0].size();
+    int zDim = aData[0][0][0].size();
+
+    for (int n = 0; n < numBlocks; n++) {
+
+        for (int k=0; k < zDim; k++) {
+            for (int j=0; j < yDim; j++) {
+                for (int i=0; i < xDim; i++) {
+                    fout.write(reinterpret_cast<char*>(&aData[n][i][j][k]), sizeof(float));
+                }
             }
         }
+
+        for (int k=0; k < zDim; k++) {
+            for (int j=0; j < yDim; j++) {
+                for (int i=0; i < xDim; i++) {
+                    fout.write(reinterpret_cast<char*>(&cData[n][i][j][k]), sizeof(float));
+                }
+            }
+        }
+
+        for (int k=0; k < zDim; k++) {
+            for (int j=0; j < yDim; j++) {
+                for (int i=0; i < xDim; i++) {
+                    fout.write(reinterpret_cast<char*>(&bData[n][i][j][k]), sizeof(float));
+                }
+            }
+        }
+
     }
+
     fout.close();
 
 }
@@ -276,18 +309,30 @@ int main (int argc, char* argv[]) {
     vector<vector<vector<float>>> aVolume = collectData(lev_files[0], labels[0], lev, component);
     vector<vector<vector<float>>> cVolume = collectData(lev_files[1], labels[1], lev, component);
     vector<vector<vector<float>>> bVolume = collectData(lev_files[2], labels[2], lev, component);
-
-    writeBin(aVolume, "toVisualize.raw");
+    // writeBin(aVolume, "toVisualize.raw");
 
     vector<vector<vector<vector<float>>>> aBlocks = toBlocks(aVolume, 8);
     vector<vector<vector<vector<float>>>> cBlocks = toBlocks(cVolume, 8);
     vector<vector<vector<vector<float>>>> bBlocks = toBlocks(bVolume, 8);
 
-    IntVect loc = location(2464, aVolume, aBlocks, 8);
-    Print() << loc << endl;
+    // IntVect loc = location(2464, aVolume, aBlocks, 8);
+    // Print() << loc << endl;
+    // writeBin(aBlocks[2464], "Block.raw");
 
+    writeBin(aBlocks, cBlocks, bBlocks, "../../../data.raw");
 
-    writeBin(aBlocks[2464], "Block.raw");
+    // vector<float> test(1000);
+    // fstream fout;
+    // fout.open("../../../data.raw", ios::in | ios::binary);
+    // for (int i = 0; i < 1000; i++) {
+    //     fout.read(reinterpret_cast<char*>(&test[i]), sizeof(float));
+    // }
+    // fout.close();
+    // for (int i = 0; i < 1000; i++) {
+    //     Print() << test[i] << endl;
+    // }
+
+    // Print() << aBlocks[2483][0][2][4] << endl;
 
 }
 
