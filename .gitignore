@@ -60,3 +60,4 @@ compile_commands.json
 /getData/.brew/
 .ipynb_checkpoints
 *.raw
+/getDatav2/amrex/
