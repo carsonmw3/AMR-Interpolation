@@ -1,0 +1,16 @@
+ 0: amrex::BLBackTrace::print_backtrace_info(__sFILE*) (in getHigherLevelData) + 64
+
+ 1: amrex::BLBackTrace::handler(int) (in getHigherLevelData) + 580
+
+ 2: amrex::FileOpenFailed(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&) (in getHigherLevelData) + 120
+
+ 3: amrex::ParallelDescriptor::ReadAndBcastFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, amrex::Vector<char, std::__1::allocator<char>>&, bool, int const&) (in getHigherLevelData) + 480
+
+ 4: amrex::VisMF::Read(amrex::FabArray<amrex::FArrayBox>&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, char const*, int, int) (in getHigherLevelData) + 556
+
+ 5: collectData(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, int, int) (in getHigherLevelData) + 88
+
+ 6: main (in getHigherLevelData) + 1448
+
+ 7: start (in dyld) + 2840
+

@@ -1,0 +1,57 @@
+Host Name: gpc1.hpc.nrel.gov
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: ./getDatav2() [0x4836e0]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at ??:?
+
+ 1: ./getDatav2() [0x488837]
+    amrex::BLBackTrace::handler(int) at ??:?
+
+ 2: /lib64/libc.so.6(+0x4e5b0) [0x7f634b4855b0]
+
+ 3: /lib64/libpthread.so.0(__read+0x12) [0x7f634b81eaa2]
+    ?? ??:0
+
+ 4: /lib64/libstdc++.so.6(_ZNSt12__basic_fileIcE6xsgetnEPcl+0x3f) [0x7f634c07fd0f]
+    ?? ??:0
+
+ 5: /lib64/libstdc++.so.6(_ZNSt13basic_filebufIcSt11char_traitsIcEE9underflowEv+0x3e0) [0x7f634c0bc020]
+    ?? ??:0
+
+ 6: /lib64/libstdc++.so.6(_ZNSi6sentryC2ERSib+0x1ca) [0x7f634c0c930a]
+    ?? ??:0
+
+ 7: /lib64/libstdc++.so.6(_ZStrsIcSt11char_traitsIcEERSt13basic_istreamIT_T0_ES6_RS3_+0x2f) [0x7f634c0caccf]
+    ?? ??:0
+
+ 8: ./getDatav2() [0x4c42ed]
+    amrex::FABio::read_header(std::istream&, amrex::FArrayBox&) at ??:?
+
+ 9: ./getDatav2() [0x4c6a95]
+    amrex::FArrayBox::readFrom(std::istream&) at ??:?
+
+10: ./getDatav2() [0x47266f]
+    amrex::VisMF::readFAB(amrex::FabArray<amrex::FArrayBox>&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, amrex::VisMF::Header const&) at ??:?
+
+11: ./getDatav2() [0x4739b7]
+    amrex::VisMF::Read(amrex::FabArray<amrex::FArrayBox>&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, int) at ??:?
+
+12: ./getDatav2() [0x4129e5]
+    collectData(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int) at ??:?
+
+13: ./getDatav2() [0x40e272]
+    main at ??:?
+
+14: /lib64/libc.so.6(__libc_start_main+0xe5) [0x7f634b4717e5]
+
+15: ./getDatav2() [0x411cbe]
+    _start at ??:?
+

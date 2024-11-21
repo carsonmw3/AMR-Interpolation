@@ -1,0 +1,1 @@
+/usr/bin/c++ -O3 -DNDEBUG CMakeFiles/getData.dir/main.cpp.o -o getData  amrex/Src/libamrex_3d.a -pthread 

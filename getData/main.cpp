@@ -319,7 +319,7 @@ int main (int argc, char* argv[]) {
     // Print() << loc << endl;
     // writeBin(aBlocks[2464], "Block.raw");
 
-    writeBin(aBlocks, cBlocks, bBlocks, "../../../data.raw");
+    writeBin(aBlocks, cBlocks, bBlocks, "../../data.raw");
 
     // vector<float> test(1000);
     // fstream fout;
