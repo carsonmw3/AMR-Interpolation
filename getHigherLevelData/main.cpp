@@ -37,9 +37,9 @@ vector<vector<vector<float>>> collectData (string lev_file, int lev, int compone
 
         const Box& box = mfi.validbox();
         const Array4<Real>& mfdata = mf.array(mfi);
-        Print() << "Box size: " << box.size() << endl;
+        //Print() << "Box size: " << box.size() << endl;
         const auto lo = lbound(box);
-        Print() << "Box loc: " << lo << endl;
+        //Print() << "Box loc: " << lo << endl;
         const auto hi = ubound(box);
 
         for (int k = lo.z; k <= hi.z; k++) {
@@ -65,12 +65,13 @@ vector<vector<vector<float>>> collectData (string lev_file, int lev, int compone
 
 vector<vector<float>> collectDataNewFormat (string lev_file, int lev, int component) {
 
+    vector<vector<float>> extractedData;
+
     MultiFab mf;
 
     // read data into multifab
     VisMF::Read(mf, lev_file);
-
-    vector<vector<float>> extractedData;
+    BoxArray ba = mf.boxArray();
 
     for (MFIter mfi(mf, false); mfi.isValid(); ++mfi) {
 
@@ -79,8 +80,10 @@ vector<vector<float>> collectDataNewFormat (string lev_file, int lev, int compon
         const auto lo = lbound(box);
         const auto hi = ubound(box);
         const auto shape = box.size();
+        const auto indexType = box.ixType();
         // Print() << "Box size: " << box.size() << endl;
         // Print() << "Box loc: " << lo << endl;
+        // Print() << "Index type: " << indexType << endl;
 
         vector<float> boxData;
 
@@ -106,6 +109,8 @@ vector<vector<float>> collectDataNewFormat (string lev_file, int lev, int compon
         // }
     }
 
+    extractedData.shrink_to_fit();
+    Print() << "Number of boxes: " << to_string(extractedData.size()) << endl;
     return extractedData;
 }
 
@@ -233,6 +238,8 @@ int main (int argc, char* argv[]) {
         // writeBin2(volume, outFile);
 
         vector<vector<float>> data = collectDataNewFormat(lev_file, lev, component);
+        // Print() << data.size() << endl;
+        // Print() << data[0].size() << endl;
         string outFile = "../../wholeVolumesNewFormat-" + to_string(component) + "-" + to_string(lev)
                          + "/" + to_string(i) + "-wholeNewFormat-" + to_string(component) + "-" + to_string(lev) +".raw";
         writeBinNewFormat(data, outFile);

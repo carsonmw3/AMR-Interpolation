@@ -1,16 +1,38 @@
- 0: amrex::BLBackTrace::print_backtrace_info(__sFILE*) (in getHigherLevelData) + 64
+Host Name: gpc1.hpc.nrel.gov
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
 
- 1: amrex::BLBackTrace::handler(int) (in getHigherLevelData) + 580
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
 
- 2: amrex::FileOpenFailed(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&) (in getHigherLevelData) + 120
+ 0: ./getHigherLevelData() [0x485820]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at ??:?
 
- 3: amrex::ParallelDescriptor::ReadAndBcastFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, amrex::Vector<char, std::__1::allocator<char>>&, bool, int const&) (in getHigherLevelData) + 480
+ 1: ./getHigherLevelData() [0x48a977]
+    amrex::BLBackTrace::handler(int) at ??:?
 
- 4: amrex::VisMF::Read(amrex::FabArray<amrex::FArrayBox>&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, char const*, int, int) (in getHigherLevelData) + 556
+ 2: /lib64/libc.so.6(+0x4e5b0) [0x7f274dcb35b0]
 
- 5: collectData(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>, int, int) (in getHigherLevelData) + 88
+ 3: /lib64/libc.so.6(+0xb977a) [0x7f274dd1e77a]
 
- 6: main (in getHigherLevelData) + 1448
+ 4: ./getHigherLevelData() [0x4745fc]
+    amrex::VisMF::OpenStream(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) at ??:?
 
- 7: start (in dyld) + 2840
+ 5: ./getHigherLevelData() [0x474a41]
+    amrex::VisMF::readFAB(amrex::FabArray<amrex::FArrayBox>&, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, amrex::VisMF::Header const&) at ??:?
+
+ 6: ./getHigherLevelData() [0x475db7]
+    amrex::VisMF::Read(amrex::FabArray<amrex::FArrayBox>&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, char const*, int, int) at ??:?
+
+ 7: ./getHigherLevelData() [0x40dc30]
+    main at ??:?
+
+ 8: /lib64/libc.so.6(__libc_start_main+0xe5) [0x7f274dc9f7e5]
+
+ 9: ./getHigherLevelData() [0x41289e]
+    _start at ??:?
 
