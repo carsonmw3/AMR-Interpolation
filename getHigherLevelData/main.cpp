@@ -62,7 +62,10 @@ vector<vector<vector<float>>> collectData (string lev_file, int lev, int compone
 }
 
 
-
+// Reads input data and stores it in a vector where the first dimension is the
+// number of chunks of data (boxes), and each entry is a vector of floats where
+// the first three are the location of the box, the next three are the dimensions of
+// the box, and the rest is the data itself in order x, y, z.
 vector<vector<float>> collectDataNewFormat (string lev_file, int lev, int component) {
 
     vector<vector<float>> extractedData;
@@ -116,6 +119,7 @@ vector<vector<float>> collectDataNewFormat (string lev_file, int lev, int compon
 
 
 
+// Writes data from an output of collectDataNew Format to a binary file
 void writeBinNewFormat (vector<vector<float>> data, string outFilename) {
 
 

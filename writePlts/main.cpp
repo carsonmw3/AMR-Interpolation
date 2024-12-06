@@ -12,29 +12,29 @@
 #include "AMReX_PlotFileUtil.H"
 
 
-
 using namespace std;
 using namespace amrex;
 
-vector<int> readBoxCounts (string dir) {
 
-    vector<int> boxCounts;
+
+// Read the boxCounts file indicating the number of boxes at each time step
+vector<float> readBoxCounts (string dir) {
+
+    vector<float> boxCounts;
 
     fstream fout;
 
-    Print() << "Trying to open: " << dir + "boxCounts.raw" << endl;
     fout.open((dir + "boxCounts.raw"), ios::in | ios::binary);
     if (!fout.is_open()) {
         cerr << "Error opening file: " << dir + "boxCounts.raw" << endl;
         return {};  // Return empty vector on failure
     }
     while (true) {
-        int count;
-        fout.read(reinterpret_cast<char*>(&count), sizeof(int));
+        float count;
+        fout.read(reinterpret_cast<char*>(&count), sizeof(float));
         if (fout.gcount() < 4) {
             break;
         }
-        Print() << "Box count: " << to_string(count) << endl;
         boxCounts.push_back(count);
     }
     fout.close();
@@ -46,7 +46,8 @@ vector<int> readBoxCounts (string dir) {
 }
 
 
-vector<tuple<vector<vector<float>>, vector<vector<float>>>> readLocDim (string dir, vector<int> boxCounts) {
+// Read the location and dimension files indicating the location and dimension of each box
+vector<tuple<vector<vector<float>>, vector<vector<float>>>> readLocDim (string dir, vector<float> boxCounts) {
 
     fstream fout;
 
@@ -92,6 +93,7 @@ vector<tuple<vector<vector<float>>, vector<vector<float>>>> readLocDim (string d
 }
 
 
+// create a multifab with the apropriate locations and dimensions
 MultiFab createMF (vector<vector<float>> locations, vector<vector<float>> dimensions, int numBoxes) {
 
     BoxList boxes;
@@ -118,6 +120,7 @@ MultiFab createMF (vector<vector<float>> locations, vector<vector<float>> dimens
 }
 
 
+// populate a multifab with data
 int populateMF (MultiFab& multi, const string& dir, int box_idx) {
 
     for (MFIter mfi(multi, false); mfi.isValid(); ++mfi) {
@@ -167,7 +170,7 @@ int main (int argc, char* argv[]) {
     pp.query("decodedDir", decodedDir);
     pp.query("out", out);
 
-    vector<int> boxPerTime;
+    vector<float> boxPerTime;
     boxPerTime = readBoxCounts(encodedDir);
     int numTimes = boxPerTime.size();
     Print() << "Timesteps: " << to_string(numTimes) << endl;
@@ -182,14 +185,23 @@ int main (int argc, char* argv[]) {
         tuple<vector<vector<float>>, vector<vector<float>>> locdimCurrent = locdim[i];
         vector<vector<float>> locations = get<0>(locdimCurrent);
         vector<vector<float>> dimensions = get<1>(locdimCurrent);
-        int numBoxes = boxPerTime[i];
-        Print() << "Number of boxes at timestep " << to_string(i) << "= " << to_string(numBoxes) << endl;
+        int numBoxes = static_cast<int>(boxPerTime[i]);
+        Print() << "Number of boxes at timestep " << to_string(i) << " = " << to_string(numBoxes) << endl;
+        Print() << "Number of locations stored at timestep " << to_string(i) << " = " << to_string(locations.size()) << endl;
+        Print() << "Number of dimensions stored at timestep " << to_string(i) << " = " << to_string(dimensions.size()) << endl;
+
+        if (numBoxes == locations.size() && numBoxes == dimensions.size()) {
+            Print() << "Locations, dimensions read sucessfully." << endl;
+        } else {
+            Print() << "Error: number of stored locations or dimensions does not match number of boxes!" << endl;
+            break;
+        }
 
         MultiFab mf = createMF(locations, dimensions, numBoxes);
         box_idx = populateMF(mf, decodedDir, box_idx);
 
         // Implement ways to automate these definitions
-        const string name = out + Concatenate("plt", i);
+        const string name = out + Concatenate("plt", i+74);
         const Vector<string> varnames = {"temp"};
         Box domain(IntVect(0, 0, 0), IntVect(512, 192, 192));
         RealBox cell({0.0, 0.0, 0.0,}, {1.0, 1.0, 1.0});
