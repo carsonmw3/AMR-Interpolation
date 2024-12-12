@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include <AMReX.H>
 #include <AMReX_ParmParse.H>
@@ -67,6 +68,7 @@ vector<tuple<vector<vector<float>>, vector<vector<float>>>> readLocDim (string d
             fout.read(reinterpret_cast<char*>(&location[1]), sizeof(float));
             fout.read(reinterpret_cast<char*>(&location[2]), sizeof(float));
             locations.push_back(location);
+            // Print() << "Box loc: " << to_string(location[0]) << " " << to_string(location[1]) << " " << to_string(location[2]) << endl;
         }
         fout.close();
 
@@ -104,8 +106,15 @@ MultiFab createMF (vector<vector<float>> locations, vector<vector<float>> dimens
         vector<float> dim = dimensions[i];
         IntVect lo(static_cast<int>(loc[0]), static_cast<int>(loc[1]), static_cast<int>(loc[2]));
         IntVect hi(static_cast<int>(loc[0] + dim[0] - 1), static_cast<int>(loc[1] + dim[1] - 1), static_cast<int>(loc[2] + dim[2] - 1));
+        // Print() << "Box " << i << ": Location = (" << loc[0] << ", " << loc[1] << ", " << loc[2] << "), Dimension = ("
+        //         << dim[0] << ", " << dim[1] << ", " << dim[2] << ")" << endl;
+
         Box current(lo, hi);
         boxes.push_back(current);
+    }
+
+    if (boxes.size() != numBoxes) {
+        cerr << "Error: Number of boxes in BoxList does not match the expected count." << endl;
     }
 
     BoxArray array(boxes);
@@ -121,7 +130,9 @@ MultiFab createMF (vector<vector<float>> locations, vector<vector<float>> dimens
 
 
 // populate a multifab with data
-int populateMF (MultiFab& multi, const string& dir, int box_idx) {
+void populateMF (MultiFab& multi, const string& dir, int time) {
+
+    int box_idx = 0;
 
     for (MFIter mfi(multi, false); mfi.isValid(); ++mfi) {
 
@@ -130,7 +141,7 @@ int populateMF (MultiFab& multi, const string& dir, int box_idx) {
         const auto lo = lbound(box);
         const auto hi = ubound(box);
 
-        string filename = dir + "decodedBox-" + to_string(box_idx) + ".raw";
+        string filename = dir + "decodedBox-" + to_string(time) + "-" + to_string(box_idx) + ".raw";
         fstream fout;
         fout.open(filename, ios::in | ios::binary);
 
@@ -147,11 +158,8 @@ int populateMF (MultiFab& multi, const string& dir, int box_idx) {
         }
 
         fout.close();
-        box_idx += 1;
 
     }
-
-    return box_idx;
 
 }
 
@@ -165,53 +173,98 @@ int main (int argc, char* argv[]) {
     string encodedDir;
     string decodedDir;
     string out;
+    int nlevels;
+    int numTimes;
+    int xDim;
+    int yDim;
+    int zDim;
 
     pp.query("encodedDir", encodedDir);
     pp.query("decodedDir", decodedDir);
     pp.query("out", out);
+    pp.query("levels", nlevels);
+    pp.query("timesteps", numTimes);
+    pp.query("xDim", xDim);
+    pp.query("yDim", yDim);
+    pp.query("zDim", zDim);
 
-    vector<float> boxPerTime;
-    boxPerTime = readBoxCounts(encodedDir);
-    int numTimes = boxPerTime.size();
-    Print() << "Timesteps: " << to_string(numTimes) << endl;
-
-    vector<tuple<vector<vector<float>>, vector<vector<float>>>> locdim;
-    locdim = readLocDim(encodedDir, boxPerTime);
-
-    int box_idx = 0;
 
     for (int i=0; i < numTimes; i++) {
 
-        tuple<vector<vector<float>>, vector<vector<float>>> locdimCurrent = locdim[i];
-        vector<vector<float>> locations = get<0>(locdimCurrent);
-        vector<vector<float>> dimensions = get<1>(locdimCurrent);
-        int numBoxes = static_cast<int>(boxPerTime[i]);
-        Print() << "Number of boxes at timestep " << to_string(i) << " = " << to_string(numBoxes) << endl;
-        Print() << "Number of locations stored at timestep " << to_string(i) << " = " << to_string(locations.size()) << endl;
-        Print() << "Number of dimensions stored at timestep " << to_string(i) << " = " << to_string(dimensions.size()) << endl;
+        const string name = out + Concatenate("plt", i+74);
+        Vector<MultiFab> mfs;
+        const Vector<string> varnames = {"temp"};
+        Vector<Geometry> geoms;
+        Real time = 1.0;
+        Vector<int> level_steps;
+        Vector<IntVect> ref_ratio;
 
-        if (numBoxes == locations.size() && numBoxes == dimensions.size()) {
-            Print() << "Locations, dimensions read sucessfully." << endl;
-        } else {
-            Print() << "Error: number of stored locations or dimensions does not match number of boxes!" << endl;
-            break;
+        for(int l=0; l < nlevels; l++) {
+
+            string encoded = encodedDir + to_string(l) + "/";
+            string decoded = decodedDir + to_string(l) + "/";
+
+            vector<float> boxPerTime;
+            boxPerTime = readBoxCounts(encoded);
+
+            vector<tuple<vector<vector<float>>, vector<vector<float>>>> locdim;
+            locdim = readLocDim(encoded, boxPerTime);
+
+            tuple<vector<vector<float>>, vector<vector<float>>> locdimCurrent = locdim[i];
+            vector<vector<float>> locations = get<0>(locdimCurrent);
+            vector<vector<float>> dimensions = get<1>(locdimCurrent);
+            int numBoxes = static_cast<int>(boxPerTime[i]);
+            Print() << "Number of boxes at timestep " << to_string(i) << ", level " << to_string(l) << " = " << to_string(numBoxes) << endl;
+            // Print() << "Number of locations stored at timestep " << to_string(i) << ", level " << to_string(l) << " = " << to_string(locations.size()) << endl;
+            // Print() << "Number of dimensions stored at timestep " << to_string(i) << ", level " << to_string(l) << " = " << to_string(dimensions.size()) << endl;
+
+            if (numBoxes == locations.size() && numBoxes == dimensions.size()) {
+                Print() << "Locations, dimensions read successfully." << endl;
+            } else {
+                Print() << "Error: number of stored locations or dimensions does not match number of boxes!" << endl;
+                break;
+            }
+
+            MultiFab mf = createMF(locations, dimensions, numBoxes);
+            // Print() << "Successfully created MultiFab with " << to_string(mf.size()) << " boxes." << endl;
+            populateMF(mf, decoded, i);
+            // Print() << "Successfully populated MultiFab with " << to_string(mf.size()) << " boxes." << endl;
+            mfs.push_back(std::move(mf));
+
+            int xDimCurrent = xDim * pow(2, l);
+            int yDimCurrent = yDim * pow(2, l);
+            int zDimCurrent = zDim * pow(2, l);
+            Print() << "xDim: " << xDimCurrent << ", yDim: " << yDimCurrent << ", zDim: " << zDimCurrent << endl;
+
+            Box domain(IntVect(0, 0, 0), IntVect(xDimCurrent-1, yDimCurrent-1, zDimCurrent-1));
+            RealBox cell({0.0, 0.0, 0.0,}, {static_cast<double>(xDim), static_cast<double>(yDim), static_cast<double>(zDim)});
+            Array<int,AMREX_SPACEDIM> is_periodic {AMREX_D_DECL(0, 0, 0)};
+            const Geometry geom(domain, cell, 0, is_periodic);
+            geoms.push_back(geom);
+            int level_step = 1;
+            level_steps.push_back(level_step);
+            if (l > 0) {
+                IntVect ratio(2, 2, 2);
+                ref_ratio.push_back(ratio);
+            }
+            // Print() << "Successfully assigned variables for plotfile." << endl;
         }
 
-        MultiFab mf = createMF(locations, dimensions, numBoxes);
-        box_idx = populateMF(mf, decodedDir, box_idx);
+        Vector<const MultiFab*> mfPtrs;
+        for (auto& mf : mfs) {
+            mfPtrs.push_back(&mf);
+        }
+        const Vector<const MultiFab*> constMfs = mfPtrs;
+        const Vector<Geometry> constGeoms = geoms;
+        const Vector<int> constLevelSteps = level_steps;
+        const Vector<IntVect> constRefRatio = ref_ratio;
+        // Print() << "Ready to write plotfile." << endl;
 
-        // Implement ways to automate these definitions
-        const string name = out + Concatenate("plt", i+74);
-        const Vector<string> varnames = {"temp"};
-        Box domain(IntVect(0, 0, 0), IntVect(512, 192, 192));
-        RealBox cell({0.0, 0.0, 0.0,}, {1.0, 1.0, 1.0});
-        Array<int,AMREX_SPACEDIM> is_periodic {AMREX_D_DECL(0, 0, 0)};
-        const Geometry geom(domain, cell, 0, is_periodic);
-        Real time = 1;
-        int level_step = 1;
-
-        WriteSingleLevelPlotfile(name, mf, varnames, geom, time, level_step);
+        WriteMultiLevelPlotfile(name, nlevels, constMfs, varnames, constGeoms, time, constLevelSteps, constRefRatio);
+        Print() << "Successfully wrote plotfile." << endl;
 
     }
+
+    Finalize();
 
 }
