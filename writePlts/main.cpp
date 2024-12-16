@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <cassert>
 
 #include <AMReX.H>
 #include <AMReX_ParmParse.H>
@@ -123,6 +124,9 @@ MultiFab createMF (vector<vector<float>> locations, vector<vector<float>> dimens
     int ngrow = 0;
 
     MultiFab output(array, dm, ncomp, ngrow);
+    if (output.size() == 0) {
+        cerr << "Error: MultiFab not initialized correctly." << endl;
+    }
 
     return output;
 
@@ -144,6 +148,10 @@ void populateMF (MultiFab& multi, const string& dir, int time) {
         string filename = dir + "decodedBox-" + to_string(time) + "-" + to_string(box_idx) + ".raw";
         fstream fout;
         fout.open(filename, ios::in | ios::binary);
+        if (!fout.is_open()) {
+            cerr << "Error: Unable to open file " << filename << endl;
+            return;
+        }
 
         for (int k = lo.z; k <= hi.z; k++) {
 
@@ -151,13 +159,22 @@ void populateMF (MultiFab& multi, const string& dir, int time) {
 
                 for (int i = lo.x; i <= hi.x; i++) {
 
-                    fout.read(reinterpret_cast<char*>(&mfdata(i,j,k,0)), sizeof(float));
+                    float value;
+                    fout.read(reinterpret_cast<char*>(&value), sizeof(value));
+                    if (fout.fail()) {
+                        cerr << "Error reading from file" << endl;
+                        return;
+                    }
+                    mfdata(i,j,k,0) = value;
+
+                    // Print() << mfdata(i,j,k,0) << endl;
 
                 }
             }
         }
 
         fout.close();
+        box_idx++;
 
     }
 
@@ -237,7 +254,7 @@ int main (int argc, char* argv[]) {
             Print() << "xDim: " << xDimCurrent << ", yDim: " << yDimCurrent << ", zDim: " << zDimCurrent << endl;
 
             Box domain(IntVect(0, 0, 0), IntVect(xDimCurrent-1, yDimCurrent-1, zDimCurrent-1));
-            RealBox cell({0.0, 0.0, 0.0,}, {static_cast<double>(xDim), static_cast<double>(yDim), static_cast<double>(zDim)});
+            RealBox cell({0.0, -4.7025, -4.7025}, {25.08, 4.7025, 4.7025});
             Array<int,AMREX_SPACEDIM> is_periodic {AMREX_D_DECL(0, 0, 0)};
             const Geometry geom(domain, cell, 0, is_periodic);
             geoms.push_back(geom);
